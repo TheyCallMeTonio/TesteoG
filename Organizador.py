@@ -1,5 +1,5 @@
 # =====================================
-# ORGANIZADOR DE ARCHIVOS AUTOMÁTICO
+# ORGANIZADOR DE files AUTOMÁTICO
 # =====================================
 
 import os
@@ -10,9 +10,9 @@ from collections import defaultdict
 # CONFIGURACIÓN
 # -------------------------------
 
-RUTA = "./archivos"  # carpeta a organizar
+Route = "./files"  # carpeta a organizar
 
-EXTENSIONES = {
+Xtenchions = {
     "Imagenes": [".jpg", ".png", ".jpeg", ".gif"],
     "Documentos": [".pdf", ".docx", ".txt", ".xlsx"],
     "Videos": [".mp4", ".avi", ".mkv"],
@@ -26,57 +26,57 @@ EXTENSIONES = {
 # -------------------------------
 
 def crear_carpetas():
-    for carpeta in EXTENSIONES.keys():
-        ruta_carpeta = os.path.join(RUTA, carpeta)
+    for carpeta in Xtenchions.keys():
+        ruta_carpeta = os.path.join(Route, carpeta)
         os.makedirs(ruta_carpeta, exist_ok=True)
 
-    os.makedirs(os.path.join(RUTA, "Otros"), exist_ok=True)
+    os.makedirs(os.path.join(Route, "Otros"), exist_ok=True)
 
 
-def obtener_categoria(extension):
-    for categoria, extensiones in EXTENSIONES.items():
-        if extension in extensiones:
+def obtener_categoria(anotherextenchon):
+    for categoria, Xtenchions in Xtenchions.items():
+        if anotherextenchon in Xtenchions:
             return categoria
     return "Otros"
 
 
-def organizar_archivos():
-    movimientos = defaultdict(int)
+def organizar_files():
+    movement = defaultdict(int)
 
-    for archivo in os.listdir(RUTA):
-        ruta_archivo = os.path.join(RUTA, archivo)
+    for archivo in os.listdir(Route):
+        ruta_archivo = os.path.join(Route, archivo)
 
         if os.path.isfile(ruta_archivo):
-            _, extension = os.path.splitext(archivo)
-            categoria = obtener_categoria(extension.lower())
+            _, anotherextenchon = os.path.splitext(archivo)
+            categoria = obtener_categoria(anotherextenchon.lower())
 
-            destino = os.path.join(RUTA, categoria, archivo)
+            destino = os.path.join(Route, categoria, archivo)
             shutil.move(ruta_archivo, destino)
-            movimientos[categoria] += 1
+            movement[categoria] += 1
 
-    return movimientos
+    return movement
 
 
-def mostrar_reporte(movimientos):
-    print("\n📊 REPORTE DE ORGANIZACIÓN")
+def mostrar_reporte(movement):
+    print("\n REPORTE DE ORGANIZACIÓN")
     total = 0
-    for categoria, cantidad in movimientos.items():
-        print(f"{categoria}: {cantidad} archivos")
+    for categoria, cantidad in movement.items():
+        print(f"{categoria}: {cantidad} files")
         total += cantidad
-    print(f"TOTAL: {total} archivos organizados")
+    print(f"TOTAL: {total} files organizados")
 
 
 # -------------------------------
 # PROGRAMA PRINCIPAL
 # -------------------------------
 
-print("📁 ORGANIZADOR DE ARCHIVOS")
-print(f"Ruta objetivo: {RUTA}")
+print(" ORGANIZADOR DE files")
+print(f"Ruta objetivo: {Route}")
 
-if not os.path.exists(RUTA):
-    print("❌ La carpeta no existe")
+if not os.path.exists(Route):
+    print(" La carpeta no existe")
 else:
     crear_carpetas()
-    movimientos = organizar_archivos()
-    mostrar_reporte(movimientos)
-    print("\n✅ Organización completada")
+    movement = organizar_files()
+    mostrar_reporte(movement)
+    print("\n Organización completada")

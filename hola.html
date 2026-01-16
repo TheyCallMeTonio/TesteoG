@@ -1,0 +1,779 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Melody Clinic - Sistema de Facturación</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'brand-pink': '#FF69B4',
+                        'brand-purple': '#9370DB',
+                        'brand-blue': '#87CEEB',
+                        'pastel-pink': '#fce7f3',
+                        'pastel-rose': '#f9a8d4',
+                        'pastel-purple': '#e9d5ff',
+                        'pastel-blue': '#dbeafe',
+                        'soft-pink': '#ec4899',
+                        'soft-purple': '#8b5cf6',
+                        'soft-gray': '#6b7280'
+                    }
+
+                    
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Allura:wght@400&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .brand-font { font-family: 'Allura', cursive; }
+        .gradient-bg { background: linear-gradient(135deg, #fef7ff 0%, #fce7f3 50%, #e0e7ff 100%); }
+        .card-shadow { box-shadow: 0 4px 20px rgba(236, 72, 153, 0.08); }
+        .search-highlight { background-color: #fef3c7; }
+        .invoice-bg { background: #FF69B4; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-sm shadow-sm border-b border-pastel-rose/30">
+        <div class="max-w-7xl mx-auto px-4 py-4">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center space-x-3">
+                    <!-- Logo simple círculo rosita -->
+                    <div class="w-12 h-12 bg-white rounded-full shadow-lg"></div>
+                    <div>
+                        <h1 class="text-3xl font-bold brand-font text-white">My Melody Clinic</h1>
+                        <p class="text-soft-pink text-sm font-medium">Sistema de Facturación</p>
+                    </div>
+                </div>
+                <div class="text-right">
+                    <p class="text-gray-700 font-medium" id="currentDate"></p>
+                    <p class="text-soft-pink text-sm">Factura #<span id="invoiceNumber">001</span></p>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <!-- Tabs Navigation -->
+        <div class="mb-6">
+            <div class="flex space-x-1 bg-white/60 backdrop-blur-sm p-1 rounded-2xl card-shadow">
+                <button onclick="switchTab('patient')" id="patientTab" class="flex-1 py-3 px-6 rounded-xl font-medium transition-all tab-button active">
+                    Datos del Paciente
+                </button>
+                <button onclick="switchTab('medications')" id="medicationsTab" class="flex-1 py-3 px-6 rounded-xl font-medium transition-all tab-button">
+                    Medicamentos
+                </button>
+                <button onclick="switchTab('invoice')" id="invoiceTab" class="flex-1 py-3 px-6 rounded-xl font-medium transition-all tab-button">
+                    Facturación
+                </button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 gap-6" id="mainGrid">
+            <!-- Main Content Area -->
+            <div class="w-full" id="mainContent">
+                
+                <!-- Patient Tab -->
+                <div id="patientContent" class="tab-content">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-3xl card-shadow p-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                            Información del Paciente
+                        </h2>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Nombre Completo *</label>
+                                <input type="text" id="patientName" class="w-full px-4 py-3 border border-pastel-rose/30 rounded-2xl focus:border-soft-pink focus:outline-none focus:ring-2 focus:ring-soft-pink/20 transition-all bg-white/70" placeholder="Ej: María González Pérez">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Cédula/ID *</label>
+                                <input type="text" id="patientId" class="w-full px-4 py-3 border border-pastel-rose/30 rounded-2xl focus:border-soft-pink focus:outline-none focus:ring-2 focus:ring-soft-pink/20 transition-all bg-white/70" placeholder="Ej: 1234567890">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Teléfono</label>
+                                <input type="tel" id="patientPhone" class="w-full px-4 py-3 border border-pastel-rose/30 rounded-2xl focus:border-soft-pink focus:outline-none focus:ring-2 focus:ring-soft-pink/20 transition-all bg-white/70" placeholder="Ej: +1 234 567 8900">
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Email</label>
+                                <input type="email" id="patientEmail" class="w-full px-4 py-3 border border-pastel-rose/30 rounded-2xl focus:border-soft-pink focus:outline-none focus:ring-2 focus:ring-soft-pink/20 transition-all bg-white/70" placeholder="Ej: maria@email.com">
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-gray-700 font-medium mb-2">Dirección</label>
+                                <textarea id="patientAddress" rows="3" class="w-full px-4 py-3 border border-pastel-rose/30 rounded-2xl focus:border-soft-pink focus:outline-none focus:ring-2 focus:ring-soft-pink/20 transition-all bg-white/70" placeholder="Dirección completa del paciente"></textarea>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-gray-700 font-medium mb-2">Método de Pago</label>
+                                <select id="paymentMethod" class="w-full px-4 py-3 border border-pastel-rose/30 rounded-2xl focus:border-soft-pink focus:outline-none focus:ring-2 focus:ring-soft-pink/20 transition-all bg-white/70">
+                                    <option value="">Seleccionar método de pago</option>
+                                    <option value="efectivo">Efectivo</option>
+                                    <option value="tarjeta-credito">Tarjeta de Crédito</option>
+                                    <option value="tarjeta-debito">Tarjeta de Débito</option>
+                                    <option value="transferencia">Transferencia Bancaria</option>
+                                    <option value="cheque">Cheque</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Medications Tab -->
+                <div id="medicationsContent" class="tab-content hidden">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-3xl card-shadow p-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                            Medicamentos y Productos
+                        </h2>
+                        
+                        <!-- Buscador de Medicamentos -->
+                        <div class="mb-6">
+                            <label class="block text-gray-700 font-medium mb-2">Buscar Medicamento</label>
+                            <div class="relative">
+                                <input type="text" id="medicationSearch" class="w-full px-4 py-3 pl-12 border border-pastel-rose/30 rounded-2xl focus:border-soft-pink focus:outline-none focus:ring-2 focus:ring-soft-pink/20 transition-all bg-white/70" placeholder="Buscar por nombre del medicamento...">
+                                <div class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400">
+                                    🔍
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Filtros -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Categoría</label>
+                                <select id="medicationCategory" class="w-full px-4 py-3 border border-pastel-rose/30 rounded-2xl focus:border-soft-pink focus:outline-none focus:ring-2 focus:ring-soft-pink/20 transition-all bg-white/70">
+                                    <option value="">Todas las categorías</option>
+                                    <option value="analgesicos">Analgésicos</option>
+                                    <option value="antibioticos">Antibióticos</option>
+                                    <option value="antiinflamatorios">Antiinflamatorios</option>
+                                    <option value="antiacidos">Antiácidos</option>
+                                    <option value="vitaminas">Vitaminas</option>
+                                    <option value="cardiovasculares">Cardiovasculares</option>
+                                    <option value="respiratorios">Respiratorios</option>
+                                    <option value="dermatologicos">Dermatológicos</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-gray-700 font-medium mb-2">Presentación</label>
+                                <select id="medicationPresentation" class="w-full px-4 py-3 border border-pastel-rose/30 rounded-2xl focus:border-soft-pink focus:outline-none focus:ring-2 focus:ring-soft-pink/20 transition-all bg-white/70">
+                                    <option value="">Todas</option>
+                                    <option value="tabletas">Tabletas</option>
+                                    <option value="capsulas">Cápsulas</option>
+                                    <option value="jarabe">Jarabe</option>
+                                    <option value="crema">Crema</option>
+                                    <option value="inyectable">Inyectable</option>
+                                    <option value="gotas">Gotas</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button onclick="clearFilters()" class="w-full px-4 py-3 border border-pastel-rose/30 rounded-2xl focus:border-soft-pink focus:outline-none focus:ring-2 focus:ring-soft-pink/20 transition-all bg-white/70 hover:bg-white text-gray-700 hover:text-soft-pink font-semibold">
+                                    Limpiar Filtros
+                                </button>
+                            </div>
+                        </div>
+
+
+
+                        <!-- Lista de Medicamentos -->
+                        <div class="border-t border-pastel-rose/30 pt-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h3 class="text-lg font-semibold text-gray-800">Medicamentos Disponibles</h3>
+                                <button onclick="clearAllCart()" class="px-4 py-2 border border-pastel-rose/30 rounded-xl focus:border-soft-pink focus:outline-none focus:ring-2 focus:ring-soft-pink/20 transition-all bg-white/70 hover:bg-white text-gray-700 hover:text-soft-pink font-semibold text-sm">
+                                    Eliminar Todo
+                                </button>
+                            </div>
+                            <div id="medicationsList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6 max-h-[460px] overflow-y-auto p-2"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoice Tab -->
+                <div id="invoiceContent" class="tab-content hidden">
+                    <div class="bg-white/80 backdrop-blur-sm rounded-3xl card-shadow p-8">
+                        <h2 class="text-2xl font-bold text-gray-800 mb-6">
+                            Generar Factura
+                        </h2>
+                        
+                        <div class="text-center py-12" id="invoicePreview">
+                            <div class="text-6xl mb-4"></div>
+                            <p class="text-lg text-gray-600 mb-4">Completa los datos para generar la factura</p>
+                            <button onclick="generateInvoice()" class="bg-brand-pink hover:bg-pink-600 text-white font-bold py-4 px-8 rounded-full text-lg transition-all transform hover:scale-105 shadow-lg">
+                                Generar Factura Completa
+                            </button>
+                        </div>
+
+                        <div id="generatedInvoice" class="hidden">
+                            <!-- Contenido de la factura generada -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Summary Panel -->
+            <div class="lg:col-span-1" id="cartPanel">
+                <div class="bg-white/80 backdrop-blur-sm rounded-3xl card-shadow p-6 sticky top-6">
+                    <h3 class="text-xl font-bold text-gray-800 mb-4">
+                        Carrito de Compras
+                    </h3>
+                    
+                    <div class="space-y-3 mb-6 max-h-80 overflow-y-auto overflow-x-hidden pt-2" id="cartItems">
+                        <div class="text-center py-8 text-gray-500">
+                            <p>No hay productos en el carrito</p>
+                        </div>
+                    </div>
+                    
+                    <div class="border-t border-pastel-rose/30 pt-4">
+                        <div class="bg-brand-pink/20 rounded-2xl p-4">
+                            <h4 class="font-semibold text-gray-700 mb-2">Total General</h4>
+                            <p class="text-3xl font-bold text-brand-pink" id="grandTotal">$0.00</p>
+                        </div>
+                    </div>
+
+                    <div class="mt-6 space-y-3" id="invoiceActions" style="display: none;">
+                        <button onclick="printInvoice()" class="w-full bg-brand-pink text-white font-semibold py-3 px-4 rounded-2xl transition-all hover:bg-pink-600">
+                            Imprimir
+                        </button>
+                        <button onclick="downloadInvoice()" class="w-full bg-pink-600 text-white font-semibold py-3 px-4 rounded-2xl transition-all hover:bg-brand-pink">
+                            Descargar PDF
+                        </button>
+                        <button onclick="newInvoice()" class="w-full border-2 border-brand-pink text-brand-pink hover:bg-brand-pink hover:text-white font-semibold py-3 px-4 rounded-2xl transition-all">
+                            Nueva Factura
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedMedications = [];
+        let invoiceCounter = 1;
+        let currentTab = 'patient';
+
+        // Base de datos de medicamentos
+        const medicationsDatabase = [
+            // Analgésicos
+            { id: 1, name: "Paracetamol", category: "analgesicos", presentation: "tabletas", dosage: "500mg", price: 3.50, stock: 100 },
+            { id: 2, name: "Acetaminofén", category: "analgesicos", presentation: "jarabe", dosage: "160mg/5ml", price: 5.25, stock: 50 },
+            { id: 3, name: "Ibuprofeno", category: "analgesicos", presentation: "tabletas", dosage: "400mg", price: 4.75, stock: 80 },
+            { id: 4, name: "Aspirina", category: "analgesicos", presentation: "tabletas", dosage: "100mg", price: 2.80, stock: 120 },
+            { id: 5, name: "Diclofenaco", category: "analgesicos", presentation: "crema", dosage: "1%", price: 8.90, stock: 30 },
+            
+            // Antibióticos
+            { id: 6, name: "Amoxicilina", category: "antibioticos", presentation: "capsulas", dosage: "500mg", price: 12.50, stock: 60 },
+            { id: 7, name: "Azitromicina", category: "antibioticos", presentation: "tabletas", dosage: "500mg", price: 18.75, stock: 40 },
+            { id: 8, name: "Cefalexina", category: "antibioticos", presentation: "capsulas", dosage: "500mg", price: 15.20, stock: 35 },
+            { id: 9, name: "Ciprofloxacina", category: "antibioticos", presentation: "tabletas", dosage: "500mg", price: 22.30, stock: 25 },
+            
+            // Antiinflamatorios
+            { id: 10, name: "Naproxeno", category: "antiinflamatorios", presentation: "tabletas", dosage: "250mg", price: 6.40, stock: 70 },
+            { id: 11, name: "Ketoprofeno", category: "antiinflamatorios", presentation: "crema", dosage: "2.5%", price: 11.80, stock: 20 },
+            { id: 12, name: "Meloxicam", category: "antiinflamatorios", presentation: "tabletas", dosage: "15mg", price: 9.60, stock: 45 },
+            
+            // Antiácidos
+            { id: 13, name: "Omeprazol", category: "antiacidos", presentation: "capsulas", dosage: "20mg", price: 8.25, stock: 90 },
+            { id: 14, name: "Ranitidina", category: "antiacidos", presentation: "tabletas", dosage: "150mg", price: 5.70, stock: 65 },
+            { id: 15, name: "Hidróxido de Aluminio", category: "antiacidos", presentation: "jarabe", dosage: "400mg/5ml", price: 7.40, stock: 40 },
+            
+            // Vitaminas
+            { id: 16, name: "Vitamina C", category: "vitaminas", presentation: "tabletas", dosage: "1000mg", price: 4.20, stock: 150 },
+            { id: 17, name: "Complejo B", category: "vitaminas", presentation: "capsulas", dosage: "Multi", price: 12.90, stock: 80 },
+            { id: 18, name: "Vitamina D3", category: "vitaminas", presentation: "gotas", dosage: "400UI/gota", price: 15.60, stock: 30 },
+            { id: 19, name: "Ácido Fólico", category: "vitaminas", presentation: "tabletas", dosage: "5mg", price: 3.80, stock: 100 },
+            
+            // Cardiovasculares
+            { id: 20, name: "Enalapril", category: "cardiovasculares", presentation: "tabletas", dosage: "10mg", price: 8.50, stock: 55 },
+            { id: 21, name: "Atenolol", category: "cardiovasculares", presentation: "tabletas", dosage: "50mg", price: 6.75, stock: 70 },
+            { id: 22, name: "Amlodipino", category: "cardiovasculares", presentation: "tabletas", dosage: "5mg", price: 7.20, stock: 60 },
+            
+            // Respiratorios
+            { id: 23, name: "Salbutamol", category: "respiratorios", presentation: "jarabe", dosage: "2mg/5ml", price: 9.80, stock: 35 },
+            { id: 24, name: "Loratadina", category: "respiratorios", presentation: "tabletas", dosage: "10mg", price: 5.40, stock: 85 },
+            { id: 25, name: "Dextrometorfano", category: "respiratorios", presentation: "jarabe", dosage: "15mg/5ml", price: 8.60, stock: 45 },
+            
+            // Dermatológicos
+            { id: 26, name: "Hidrocortisona", category: "dermatologicos", presentation: "crema", dosage: "1%", price: 12.30, stock: 25 },
+            { id: 27, name: "Clotrimazol", category: "dermatologicos", presentation: "crema", dosage: "1%", price: 14.50, stock: 20 },
+            { id: 28, name: "Ketoconazol", category: "dermatologicos", presentation: "crema", dosage: "2%", price: 16.80, stock: 15 }
+        ];
+
+        // Inicialización
+        document.addEventListener('DOMContentLoaded', function() {
+            updateCurrentDate();
+            displayMedications(medicationsDatabase);
+            updateCartDisplay();
+            
+            // Event listeners para búsqueda y filtros
+            document.getElementById('medicationSearch').addEventListener('input', filterMedications);
+            document.getElementById('medicationCategory').addEventListener('change', filterMedications);
+            document.getElementById('medicationPresentation').addEventListener('change', filterMedications);
+        });
+
+        function updateCurrentDate() {
+            document.getElementById('currentDate').textContent = new Date().toLocaleDateString('es-ES', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        // Tab Management
+        function switchTab(tabName) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.add('hidden');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.tab-button').forEach(button => {
+                button.classList.remove('active', 'bg-brand-pink', 'text-white');
+                button.classList.add('text-gray-600', 'hover:text-brand-pink');
+            });
+            
+            // Show selected tab content
+            document.getElementById(tabName + 'Content').classList.remove('hidden');
+            
+            // Add active class to selected tab
+            const activeTab = document.getElementById(tabName + 'Tab');
+            activeTab.classList.add('active', 'bg-brand-pink', 'text-white');
+            activeTab.classList.remove('text-gray-600', 'hover:text-brand-pink');
+            
+            // Show/hide cart panel based on tab
+            const mainGrid = document.getElementById('mainGrid');
+            const mainContent = document.getElementById('mainContent');
+            const cartPanel = document.getElementById('cartPanel');
+            
+            if (tabName === 'patient') {
+                // Hide cart panel in patient tab
+                mainGrid.className = 'grid grid-cols-1 gap-6';
+                mainContent.className = 'w-full';
+                cartPanel.style.display = 'none';
+            } else {
+                // Show cart panel in medications and invoice tabs
+                mainGrid.className = 'grid grid-cols-1 lg:grid-cols-4 gap-6';
+                mainContent.className = 'lg:col-span-3';
+                cartPanel.style.display = 'block';
+            }
+            
+            currentTab = tabName;
+        }
+
+        // Medications Management
+        function displayMedications(medicationsToShow) {
+            const medicationsList = document.getElementById('medicationsList');
+            
+            if (medicationsToShow.length === 0) {
+                medicationsList.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500"><p>No se encontraron medicamentos</p></div>';
+                return;
+            }
+
+            medicationsList.innerHTML = medicationsToShow.map(med => {
+                const selectedMed = selectedMedications.find(selected => selected.id === med.id);
+                const isSelected = selectedMed !== undefined;
+                
+                return `
+                <div class="bg-white/60 backdrop-blur-sm rounded-2xl p-4 border ${isSelected ? 'border-brand-pink/60 shadow-lg shadow-brand-pink/20 ring-2 ring-brand-pink/30' : 'border-pastel-rose/20'} hover:border-brand-pink/40 transition-all medication-card relative">
+                    ${isSelected ? `<button onclick="removeMedicationFromCard(${med.id})" class="absolute -top-1 -right-1 w-6 h-6 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs font-bold transition-all z-10">×</button>` : ''}
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-semibold text-gray-800 text-sm">${med.name}</h4>
+                        <span class="text-xs px-2 py-1 bg-brand-pink/20 text-brand-pink rounded-full">${med.stock}</span>
+                    </div>
+                    <p class="text-xs text-gray-600 mb-1">${med.dosage}</p>
+                    <p class="text-xs text-gray-500 mb-2 capitalize">${med.presentation}</p>
+                    <div class="flex justify-between items-center">
+                        <span class="text-lg font-bold text-brand-pink">$${med.price.toFixed(2)}</span>
+                        ${isSelected ? `
+                            <div class="flex items-center space-x-2">
+                                <button onclick="updateMedicationQuantityFromCard(${med.id}, -1)" class="w-6 h-6 bg-brand-pink text-white rounded-full hover:bg-pink-600 transition-all text-xs">-</button>
+                                <span class="font-semibold text-gray-800 text-sm w-6 text-center">${selectedMed.quantity}</span>
+                                <button onclick="updateMedicationQuantityFromCard(${med.id}, 1)" class="w-6 h-6 bg-brand-pink text-white rounded-full hover:bg-pink-600 transition-all text-xs">+</button>
+                            </div>
+                        ` : `
+                            <button onclick="selectMedication(${med.id})" class="text-xs bg-brand-pink text-white px-3 py-1 rounded-full hover:bg-pink-600 transition-all">
+                                Agregar
+                            </button>
+                        `}
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function selectMedication(medicationId) {
+            const medication = medicationsDatabase.find(med => med.id === medicationId);
+            if (!medication) return;
+
+            // Check if already selected
+            const existingIndex = selectedMedications.findIndex(med => med.id === medicationId);
+            
+            if (existingIndex >= 0) {
+                // Increase quantity
+                selectedMedications[existingIndex].quantity += 1;
+                selectedMedications[existingIndex].total = selectedMedications[existingIndex].quantity * selectedMedications[existingIndex].price;
+            } else {
+                // Add new medication
+                selectedMedications.push({
+                    ...medication,
+                    quantity: 1,
+                    total: medication.price
+                });
+            }
+            
+            updateCartDisplay();
+            // Refresh the medications display to show the new state
+            filterMedications();
+        }
+
+        function updateMedicationQuantityFromCard(medicationId, change) {
+            const medication = selectedMedications.find(med => med.id === medicationId);
+            if (!medication) return;
+
+            medication.quantity += change;
+            
+            if (medication.quantity <= 0) {
+                removeMedication(medicationId);
+                filterMedications(); // Refresh display
+                return;
+            }
+            
+            medication.total = medication.quantity * medication.price;
+            updateCartDisplay();
+            // Refresh the medications display to show updated quantity
+            filterMedications();
+        }
+
+        function removeMedicationFromCard(medicationId) {
+            selectedMedications = selectedMedications.filter(med => med.id !== medicationId);
+            updateCartDisplay();
+            // Refresh the medications display to show the medication as unselected
+            filterMedications();
+        }
+
+        function removeMedication(medicationId) {
+            selectedMedications = selectedMedications.filter(med => med.id !== medicationId);
+            updateCartDisplay();
+        }
+
+        function updateMedicationQuantity(medicationId, change) {
+            const medication = selectedMedications.find(med => med.id === medicationId);
+            if (!medication) return;
+
+            medication.quantity += change;
+            
+            if (medication.quantity <= 0) {
+                removeMedication(medicationId);
+                return;
+            }
+            
+            medication.total = medication.quantity * medication.price;
+            updateCartDisplay();
+        }
+
+
+
+        function filterMedications() {
+            const searchTerm = document.getElementById('medicationSearch').value.toLowerCase();
+            const categoryFilter = document.getElementById('medicationCategory').value;
+            const presentationFilter = document.getElementById('medicationPresentation').value;
+
+            let filteredMedications = medicationsDatabase.filter(med => {
+                const matchesSearch = med.name.toLowerCase().includes(searchTerm);
+                const matchesCategory = !categoryFilter || med.category === categoryFilter;
+                const matchesPresentation = !presentationFilter || med.presentation === presentationFilter;
+                
+                return matchesSearch && matchesCategory && matchesPresentation;
+            });
+
+            displayMedications(filteredMedications);
+        }
+
+        function clearFilters() {
+            document.getElementById('medicationSearch').value = '';
+            document.getElementById('medicationCategory').value = '';
+            document.getElementById('medicationPresentation').value = '';
+            displayMedications(medicationsDatabase);
+        }
+
+        function clearAllCart() {
+            if (selectedMedications.length === 0) {
+                return; // No hace nada si el carrito está vacío
+            }
+            
+            selectedMedications = [];
+            updateCartDisplay();
+            // Refresh the medications display to show all medications as unselected
+            filterMedications();
+        }
+
+        // Cart Display Management
+        function updateCartDisplay() {
+            const cartItems = document.getElementById('cartItems');
+            const grandTotal = selectedMedications.reduce((sum, med) => sum + med.total, 0);
+
+            if (selectedMedications.length === 0) {
+                cartItems.innerHTML = '<div class="text-center py-8 text-gray-500"><p>No hay productos en el carrito</p></div>';
+            } else {
+                cartItems.innerHTML = selectedMedications.map(med => `
+                    <div class="bg-brand-pink/10 rounded-xl p-3 border border-brand-pink/20 relative group hover:shadow-md transition-all mr-2">
+                        <button onclick="removeMedication(${med.id}); updateCartDisplay(); filterMedications();" class="absolute -top-2 -right-2 w-5 h-5 bg-red-500 hover:bg-red-600 text-white rounded-full text-xs font-bold transition-all opacity-0 group-hover:opacity-100 z-10">×</button>
+                        <div class="flex justify-between items-start mb-1 pr-2">
+                            <h5 class="font-medium text-gray-800 text-sm">${med.name}</h5>
+                            <span class="text-xs text-gray-600">x${med.quantity}</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs text-gray-600">${med.dosage}</span>
+                            <span class="font-semibold text-brand-pink">$${med.total.toFixed(2)}</span>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            document.getElementById('grandTotal').textContent = `$${grandTotal.toFixed(2)}`;
+        }
+
+        // Invoice Generation
+        function generateInvoice() {
+            const patientName = document.getElementById('patientName').value;
+            const patientId = document.getElementById('patientId').value;
+
+            if (!patientName || !patientId) {
+                alert('Por favor completa al menos el nombre y cédula del paciente');
+                switchTab('patient');
+                return;
+            }
+
+            if (selectedMedications.length === 0) {
+                alert('Por favor agrega al menos un medicamento');
+                return;
+            }
+
+            const subtotal = selectedMedications.reduce((sum, med) => sum + med.total, 0);
+            const tax = subtotal * 0.12;
+            const total = subtotal + tax;
+
+            const invoiceContent = document.getElementById('generatedInvoice');
+            const currentDate = new Date().toLocaleDateString('es-ES');
+            const currentInvoiceNumber = String(invoiceCounter).padStart(3, '0');
+
+            // Get additional patient data
+            const patientPhone = document.getElementById('patientPhone').value;
+            const patientEmail = document.getElementById('patientEmail').value;
+            const patientAddress = document.getElementById('patientAddress').value;
+            const paymentMethod = document.getElementById('paymentMethod').value;
+
+            invoiceContent.innerHTML = `
+                <div class="bg-white rounded-3xl p-8 shadow-2xl border-2 border-gray-100">
+                    <!-- Header con fondo rosa -->
+                    <div class="invoice-bg rounded-2xl p-6 text-white mb-8">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center space-x-4">
+                                <!-- Logo simple -->
+                                <div class="w-12 h-12 bg-white rounded-full shadow-lg"></div>
+                                <div>
+                                    <h1 class="text-3xl font-bold brand-font">My Melody Clinic</h1>
+                                    <p class="text-white/90 text-sm">Sistema de Salud Integral</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <h2 class="text-2xl font-bold">FACTURA</h2>
+                                <p class="text-white/90">#${currentInvoiceNumber}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información de contacto y fecha -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <h3 class="font-bold text-gray-800 mb-3">Información de la Clínica</h3>
+                            <div class="space-y-1 text-sm text-gray-600">
+                                <p>Las Tapias, Zona 4. 56091</p>
+                                <p>Honduras</p>
+                                <p>Tel: +1 (555) 123-4567</p>
+                                <p>info@melodyclinic.com</p>
+                                <p>RUC: 1234567890001</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <h3 class="font-bold text-gray-800 mb-3">Datos del Paciente</h3>
+                            <div class="space-y-1 text-sm text-gray-600">
+                                <p><strong>Nombre:</strong> ${patientName}</p>
+                                <p><strong>Cédula:</strong> ${patientId}</p>
+                                ${patientPhone ? `<p><strong>Tel:</strong> ${patientPhone}</p>` : ''}
+                                ${patientEmail ? `<p class="break-all text-xs"><strong>Email:</strong> ${patientEmail}</p>` : ''}
+                                ${patientAddress ? `<p class="break-words text-xs"><strong>Dir:</strong> ${patientAddress}</p>` : ''}
+                            </div>
+                        </div>
+
+                        <div class="bg-gray-50 rounded-xl p-4">
+                            <h3 class="font-bold text-gray-800 mb-3">Detalles de Facturación</h3>
+                            <div class="space-y-1 text-sm text-gray-600">
+                                <p><strong>Fecha:</strong> ${currentDate}</p>
+                                <p><strong>Factura #:</strong> ${currentInvoiceNumber}</p>
+                                <p><strong>ID:</strong> MAC${currentInvoiceNumber}</p>
+                                ${paymentMethod ? `<p><strong>Pago:</strong> ${paymentMethod}</p>` : ''}
+                                <p><strong>Estado:</strong> Pagado</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tabla de productos -->
+                    <div class="mb-8">
+                        <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                            <div class="bg-brand-pink/10 px-6 py-4 border-b border-gray-200">
+                                <h3 class="font-bold text-gray-800">Productos</h3>
+                            </div>
+                            <table class="w-full">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="text-left p-4 font-semibold text-gray-700">Descripción</th>
+                                        <th class="text-center p-4 font-semibold text-gray-700">Cant.</th>
+                                        <th class="text-right p-4 font-semibold text-gray-700">Precio Unit.</th>
+                                        <th class="text-right p-4 font-semibold text-gray-700">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    ${selectedMedications.map((med, index) => `
+                                        <tr class="${index % 2 === 0 ? 'bg-white' : 'bg-gray-50/50'}">
+                                            <td class="p-4">
+                                                <div>
+                                                    <p class="font-medium text-gray-800">${med.name}</p>
+                                                    <p class="text-sm text-gray-500">${med.dosage} - ${med.presentation}</p>
+                                                </div>
+                                            </td>
+                                            <td class="p-4 text-center text-gray-600">${med.quantity}</td>
+                                            <td class="p-4 text-right text-gray-600">$${med.price.toFixed(2)}</td>
+                                            <td class="p-4 text-right font-semibold text-gray-800">$${med.total.toFixed(2)}</td>
+                                        </tr>
+                                    `).join('')}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Totales -->
+                    <div class="flex justify-end mb-8">
+                        <div class="w-full max-w-sm">
+                            <div class="bg-gray-50 rounded-xl p-6 space-y-3">
+                                <div class="flex justify-between text-gray-600">
+                                    <span>Subtotal:</span>
+                                    <span>$${subtotal.toFixed(2)}</span>
+                                </div>
+                                <div class="flex justify-between text-gray-600">
+                                    <span>IVA (12%):</span>
+                                    <span>$${tax.toFixed(2)}</span>
+                                </div>
+                                <div class="border-t border-gray-300 pt-3">
+                                    <div class="flex justify-between text-xl font-bold">
+                                        <span class="text-gray-800">TOTAL:</span>
+                                        <span class="text-brand-pink">$${total.toFixed(2)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="text-center border-t border-gray-200 pt-6">
+                        <p class="text-gray-600 mb-2">¡Gracias por confiar en My Melody Clinic!</p>
+                        <p class="text-sm text-gray-500">Esta factura es válida como comprobante de pago</p>
+                        <div class="mt-4 text-xs text-gray-400">
+                            <p>Factura generada electrónicamente • ${new Date().toLocaleString('es-ES')}</p>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('invoicePreview').classList.add('hidden');
+            document.getElementById('generatedInvoice').classList.remove('hidden');
+            document.getElementById('invoiceActions').style.display = 'block';
+            
+            document.getElementById('invoiceNumber').textContent = currentInvoiceNumber;
+        }
+
+        function printInvoice() {
+            const printContent = document.getElementById('generatedInvoice').innerHTML;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>My Melody Clinic - Factura</title>
+                    <style>
+                        @import url('https://fonts.googleapis.com/css2?family=Allura:wght@400&display=swap');
+                        body { font-family: Arial, sans-serif; margin: 0; padding: 20px; background: white; }
+                        .brand-font { font-family: 'Allura', cursive; }
+                        .print-content { max-width: 800px; margin: 0 auto; }
+                        table { width: 100%; border-collapse: collapse; }
+                        th, td { padding: 8px; text-align: left; border-bottom: 1px solid #ddd; }
+                        th { background-color: #f8f9fa; }
+                        .invoice-bg { background: #FF69B4; }
+                        @media print { body { margin: 0; } }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-content">
+                        ${printContent}
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        function downloadInvoice() {
+            alert('Función de descarga PDF disponible. En un sistema real, esto generaría un archivo PDF para descargar.');
+        }
+
+        function newInvoice() {
+            // Clear all forms
+            document.getElementById('patientName').value = '';
+            document.getElementById('patientId').value = '';
+            document.getElementById('patientPhone').value = '';
+            document.getElementById('patientEmail').value = '';
+            document.getElementById('patientAddress').value = '';
+            document.getElementById('paymentMethod').value = '';
+            
+            // Clear arrays
+            selectedMedications = [];
+            
+            // Update displays
+            updateCartDisplay();
+            
+            // Reset invoice
+            document.getElementById('invoicePreview').classList.remove('hidden');
+            document.getElementById('generatedInvoice').classList.add('hidden');
+            document.getElementById('invoiceActions').style.display = 'none';
+            
+            // Increment counter
+            invoiceCounter++;
+            document.getElementById('invoiceNumber').textContent = String(invoiceCounter).padStart(3, '0');
+            
+            // Switch to patient tab
+            switchTab('patient');
+        }
+
+        // Initialize with patient tab active
+        switchTab('patient');
+    </script>
+
+    <style>
+        .tab-button.active {
+            background: #FF69B4;
+            color: white;
+        }
+        
+        .tab-button:not(.active) {
+            color: #6b7280;
+        }
+        
+        .tab-button:not(.active):hover {
+            color: #FF69B4;
+        }
+    </style>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'98ea3a9ef43bb4c9',t:'MTc2MDQ3Nzk2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
